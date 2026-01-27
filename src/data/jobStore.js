@@ -11,9 +11,14 @@ const addJob = (jobData) => {
     return job;
 };
 
+const getJobById =(id) => {
+    return jobs.find(job => job.id === parseInt(id));
+}
+
 const getAllJobs =() => jobs;
 
 module.exports = {
     addJob,
-    getAllJobs      
+    getAllJobs,
+    getJobById     
     };
