@@ -34,6 +34,20 @@ const createJob = (req, res) => {
     res.status(201).json({ success: true, data:job });
 };
 
+const getJobs = (req, res) => {
+  const jobs = jobStore.getAllJobs();
+  res.json({ success: true, data: jobs });
+};
+
+const getJobById =(req, res) => {
+    const job = jobStore.getJobById(req.params.id);
+    if (!job){
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+  };
+
 module.exports = {
-    createJob
+    createJob,
+    getJobs,
+    getJobById
 };
