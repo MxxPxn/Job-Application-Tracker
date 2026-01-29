@@ -1,4 +1,3 @@
-cat > .gitignore << 'EOF'
 # Dependencies
 node_modules/
 
@@ -19,4 +18,6 @@ postgres_data/
 # IDE
 .vscode/*
 !.vscode/settings.json
-EOF
+
+# Claude
+CLAUDE.md
