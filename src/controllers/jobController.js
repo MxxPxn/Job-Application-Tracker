@@ -44,10 +44,51 @@ const getJobById =(req, res) => {
     if (!job){
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
+    return res.json({ success: true, data: job });
   };
+
+  const updateJob = (req, res) => {
+    const job = jobStore.getJobById(req.params.id);
+    const allowedUpdates = {};
+
+    if(req.body.company !== undefined) {
+      allowedUpdates.company = req.body.company;
+    }
+    if(req.body.position !== undefined) {
+      allowedUpdates.position = req.body.position;
+    }
+    
+
+
+    if(req.body.status !== undefined) {
+      if (VALID_STATUSES.includes(req.body.status)){
+        allowedUpdates.status = req.body.status;
+    }else {
+      return res.status(400).json({success: false, message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`});
+    }
+  }
+    if(req.body.appliedDate !== undefined) {
+      if (!isNaN(Date.parse(req.body.appliedDate))) {
+        allowedUpdates.appliedDate = req.body.appliedDate;
+    }else {
+      return res.status(400).json({success: false, message: 'appliedDate must be a valid date'});
+    }
+  }
+    if(req.body.notes !== undefined) {
+      allowedUpdates.notes = req.body.notes;
+    }
+
+    if (!job){
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    const updatedJob = jobStore.updateJob(req.params.id, allowedUpdates);
+    res.json({ success: true, data: updatedJob });
+  };
+
 
 module.exports = {
     createJob,
     getJobs,
-    getJobById
+    getJobById,
+    updateJob
 };
