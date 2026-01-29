@@ -1,3 +1,5 @@
+
+
 const jobs = [];
 let nextId = 1;
 
@@ -15,10 +17,19 @@ const getJobById =(id) => {
     return jobs.find(job => job.id === parseInt(id));
 }
 
+const updateJob = (id, updateData) => {
+    const job = getJobById(id);
+    if (job) {
+        Object.assign(job, updateData);
+        return job;
+    }
+}
+
 const getAllJobs =() => jobs;
 
 module.exports = {
     addJob,
     getAllJobs,
-    getJobById     
+    getJobById,
+    updateJob   
     };
