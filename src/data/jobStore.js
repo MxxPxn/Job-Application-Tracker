@@ -25,11 +25,19 @@ const updateJob = (id, updateData) => {
     }
 }
 
+const deleteJob = (id) => {
+    const index = jobs.findIndex(job => job.id === parseInt(id));
+    if (index !== -1) {
+        return jobs.splice(index, 1)[0];
+    }
+}
+
 const getAllJobs =() => jobs;
 
 module.exports = {
     addJob,
     getAllJobs,
     getJobById,
-    updateJob   
+    updateJob,
+    deleteJob, 
     };
