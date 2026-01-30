@@ -57,9 +57,6 @@ const getJobById =(req, res) => {
     if(req.body.position !== undefined) {
       allowedUpdates.position = req.body.position;
     }
-    
-
-
     if(req.body.status !== undefined) {
       if (VALID_STATUSES.includes(req.body.status)){
         allowedUpdates.status = req.body.status;
@@ -85,10 +82,19 @@ const getJobById =(req, res) => {
     res.json({ success: true, data: updatedJob });
   };
 
+  const deleteJob = (req, res) => {
+    const deleteJob = jobStore.deleteJob(req.params.id);
+    if (!deleteJob){
+      return res.status(404).json({ success: false, message: 'Job not found' });
+    }
+    res.json({ success: true, data: deleteJob });
+  }
+
 
 module.exports = {
     createJob,
     getJobs,
     getJobById,
-    updateJob
+    updateJob,
+    deleteJob,
 };
