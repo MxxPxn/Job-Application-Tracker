@@ -40,6 +40,10 @@ const getJobs = (req, res) => {
 };
 
 const getJobById =(req, res) => {
+
+    if (isNaN(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'Invalid job ID' });
+    }
     const job = jobStore.getJobById(req.params.id);
     if (!job){
       return res.status(404).json({ success: false, message: 'Job not found' });
@@ -48,6 +52,9 @@ const getJobById =(req, res) => {
   };
 
   const updateJob = (req, res) => {
+    if (isNaN(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'Invalid job ID' });
+    }
     const job = jobStore.getJobById(req.params.id);
     const allowedUpdates = {};
 
@@ -83,11 +90,14 @@ const getJobById =(req, res) => {
   };
 
   const deleteJob = (req, res) => {
-    const deleteJob = jobStore.deleteJob(req.params.id);
-    if (!deleteJob){
+    if (isNaN(req.params.id)) {
+    return res.status(400).json({ success: false, message: 'Invalid job ID' });
+  }
+    const deletedJob = jobStore.deleteJob(req.params.id);
+    if (!deletedJob){
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
-    res.json({ success: true, data: deleteJob });
+    res.json({ success: true, data: deletedJob });
   }
 
 
