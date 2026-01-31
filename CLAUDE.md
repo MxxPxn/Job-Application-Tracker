@@ -43,9 +43,12 @@ src/data/             → Data access layer (currently in-memory, will migrate t
 - `POST /api/jobs` - Create job (requires: company, position, status, appliedDate)
 - `GET /api/jobs` - List all jobs
 - `GET /api/jobs/:id` - Get job by ID
-- `PUT /api/jobs/:id` - Update job
+- `PUT /api/jobs/:id` - Update job (whitelisted fields only: company, position, status, appliedDate, notes)
+- `DELETE /api/jobs/:id` - Delete job
 
 **Valid Job Statuses:** `applied`, `interview`, `offer`, `rejected`
+
+**Response Format:** All endpoints return `{ success: true/false, data: ... }`. Errors include `message` or `errors` array.
 
 # Mentorship Instructions
 
