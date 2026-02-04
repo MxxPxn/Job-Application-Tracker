@@ -1,11 +1,7 @@
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'db',
-  database: process.env.DB_NAME || 'jobtracker',
-  password: process.env.DB_PASSWORD || 'password',
-  port: process.env.DB_PORT || 5432,
+  connectionString: process.env.DATABASE_URL,
 });
 
 // Test connection
