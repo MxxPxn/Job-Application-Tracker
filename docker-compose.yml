@@ -25,6 +25,7 @@ services:
       - POSTGRES_DB=jobtracker
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./src/db/init.sql:/docker-entrypoint-initdb.d/init.sql 
 
-volumes:
+volumes:      
   postgres_data:
