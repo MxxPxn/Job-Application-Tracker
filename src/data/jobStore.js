@@ -41,10 +41,13 @@ const getJobById = async(id) => {
 const updateJob = async (id, updateData) => {
    const keys = Object.keys(updateData);
    const values = Object.values(updateData);
-
    const setClause = keys.map((key, index) => `${fieldMap[key]} = $${index + 1}`).join(', ');
+   
    const query = `UPDATE jobs SET ${setClause} WHERE id = $${keys.length + 1} RETURNING *`;
    const result = await pool.query(query, [...values, id]);
+    if (result.rows.length === 0) { 
+        return null;
+    }
    return formatJob(result.rows[0]);
 }
 
@@ -67,4 +70,5 @@ module.exports = {
     getJobById,
     updateJob,
     deleteJob, 
+    formatJob
     };
