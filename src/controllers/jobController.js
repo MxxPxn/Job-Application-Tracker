@@ -6,23 +6,22 @@ const createJob = async (req, res) => {
     const {company, position, status, appliedDate, notes} = req.body;
 
     const errors = [];
-    if (!company || typeof company !== 'string') {                   
-      errors.push('company is required and must be a string');       
-    }                                                                
-    if (!position || typeof position !== 'string') {                 
-      errors.push('position is required and must be a string');      
-    }                                                                
-    if (!status || !VALID_STATUSES.includes(status)) {               
-      errors.push(`status must be one of: ${VALID_STATUSES.join(', ')}`);                                                             
-    }                                                                
-    if (!appliedDate || isNaN(Date.parse(appliedDate))) {            
-      errors.push('appliedDate is required and must be a valid date');                                                            
+    if (!company || typeof company !== 'string') {
+      errors.push('company is required and must be a string');
+    }
+    if (!position || typeof position !== 'string') {
+      errors.push('position is required and must be a string');
+    }
+    if (!status || !VALID_STATUSES.includes(status)) {
+      errors.push(`status must be one of: ${VALID_STATUSES.join(', ')}`);
+    }
+    if (!appliedDate || isNaN(Date.parse(appliedDate))) {
+      errors.push('appliedDate is required and must be a valid date');
     }
     if (errors.length > 0) {
         return res.status(400).json({ success: false, errors });
     }
 
-    try {
     const job = await jobStore.addJob({
         company: company.trim(),
         position: position.trim(),
@@ -30,94 +29,73 @@ const createJob = async (req, res) => {
         appliedDate,
         notes: notes ? notes.trim() : ''
     });
-    res.status(201).json({ success: true, data:job });
-    } catch (error) {
-      res.status(500).json({ success: false, message: 'Internal server error' });
-    }
+    res.status(201).json({ success: true, data: job });
 };
 
 const getJobs = async (req, res) => {
-  try {
-  const jobs = await jobStore.getAllJobs();
-  res.json({ success: true, data: jobs });
-} catch (error) {
-  res.status(500).json({ success: false, message: 'Internal server error' });
-}
+    const jobs = await jobStore.getAllJobs();
+    res.json({ success: true, data: jobs });
 };
 
 const getJobById = async (req, res) => {
-
     if (isNaN(req.params.id)) {
       return res.status(400).json({ success: false, message: 'Invalid job ID' });
     }
-   try {
     const job = await jobStore.getJobById(req.params.id);
-    if (!job){
+    if (!job) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
-
     return res.json({ success: true, data: job });
-    } catch (error) { 
-      res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-  };
+};
 
-  const updateJob = async (req, res) => {
+const updateJob = async (req, res) => {
     if (isNaN(req.params.id)) {
       return res.status(400).json({ success: false, message: 'Invalid job ID' });
     }
-    try {
     const job = await jobStore.getJobById(req.params.id);
     const allowedUpdates = {};
 
-    if(req.body.company !== undefined) {
+    if (req.body.company !== undefined) {
       allowedUpdates.company = req.body.company;
     }
-    if(req.body.position !== undefined) {
+    if (req.body.position !== undefined) {
       allowedUpdates.position = req.body.position;
     }
-    if(req.body.status !== undefined) {
-      if (VALID_STATUSES.includes(req.body.status)){
+    if (req.body.status !== undefined) {
+      if (VALID_STATUSES.includes(req.body.status)) {
         allowedUpdates.status = req.body.status;
-    }else {
-      return res.status(400).json({success: false, message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`});
+      } else {
+        return res.status(400).json({ success: false, message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}` });
+      }
     }
-  }
-    if(req.body.appliedDate !== undefined) {
+    if (req.body.appliedDate !== undefined) {
       if (!isNaN(Date.parse(req.body.appliedDate))) {
         allowedUpdates.appliedDate = req.body.appliedDate;
-    }else {
-      return res.status(400).json({success: false, message: 'appliedDate must be a valid date'});
+      } else {
+        return res.status(400).json({ success: false, message: 'appliedDate must be a valid date' });
+      }
     }
-  }
-    if(req.body.notes !== undefined) {
+    if (req.body.notes !== undefined) {
       allowedUpdates.notes = req.body.notes;
     }
 
-    if (!job){
+    if (!job) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
     const updatedJob = await jobStore.updateJob(req.params.id, allowedUpdates);
     res.json({ success: true, data: updatedJob });
-    } catch (error) {
-      res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-  };
+};
 
-  const deleteJob = async (req, res) => {
+const deleteJob = async (req, res) => {
     if (isNaN(req.params.id)) {
-    return res.status(400).json({ success: false, message: 'Invalid job ID' });
-  }
-  try {
+      return res.status(400).json({ success: false, message: 'Invalid job ID' });
+    }
     const deletedJob = await jobStore.deleteJob(req.params.id);
-    if (!deletedJob){
+    if (!deletedJob) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
     res.json({ success: true, data: deletedJob });
-    } catch (error) {
-      res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-  };
+};
 
 
 module.exports = {
