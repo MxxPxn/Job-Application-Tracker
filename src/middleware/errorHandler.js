@@ -7,4 +7,7 @@ const errorHandler = (err, req, res, next) => {
   res.status(500).json({ success: false, message: 'Internal server error' });
 };
 
-module.exports = { asyncHandler, errorHandler };
+module.exports = { 
+  asyncHandler,
+  errorHandler
+};
