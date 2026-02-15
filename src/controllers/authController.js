@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userStore = require("../data/userStore");
 
@@ -49,7 +49,6 @@ const validation = (email, password, { isRegistration = false } = {}) => {
 };
 
 const login = async (req, res) => {
-
   const error = validation(req.body.email, req.body.password);
   if (error) {
     return res.status(400).json(error);
@@ -79,7 +78,9 @@ const login = async (req, res) => {
 };
 
 const register = async (req, res) => {
-  const error = validation(req.body.email, req.body.password, { isRegistration: true });
+  const error = validation(req.body.email, req.body.password, {
+    isRegistration: true,
+  });
   if (error) {
     return res.status(400).json(error);
   }
@@ -105,5 +106,5 @@ const register = async (req, res) => {
 module.exports = {
   login,
   register,
-  validation
+  validation,
 };
