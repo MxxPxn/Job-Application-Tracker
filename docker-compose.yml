@@ -11,6 +11,7 @@ services:
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://postgres:password@db:5432/jobtracker
+      - JWT_SECRET=rabbitinhat
     depends_on:
       - db
     command: npm run dev
