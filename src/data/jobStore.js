@@ -24,7 +24,7 @@ const formatJob = (row) => {
 
 const addJob = async (jobData) => {
     const result = await pool.query(
-        'INSERT INTO jobs (company, position, status, applied_date, notes, userId) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        'INSERT INTO jobs (company, position, status, applied_date, notes, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
         [jobData.company, jobData.position, jobData.status, jobData.appliedDate, jobData.notes, jobData.user_id]
     )
     return formatJob(result.rows[0]);
