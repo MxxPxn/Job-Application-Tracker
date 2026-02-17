@@ -27,7 +27,8 @@ const createJob = async (req, res) => {
         position: position.trim(),
         status,
         appliedDate,
-        notes: notes ? notes.trim() : ''
+        notes: notes ? notes.trim() : '',
+        user_id: req.user.userId
     });
     res.status(201).json({ success: true, data: job });
 };
