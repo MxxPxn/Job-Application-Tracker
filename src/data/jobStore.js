@@ -30,37 +30,37 @@ const addJob = async (jobData) => {
     return formatJob(result.rows[0]);
 };
 
-const getJobById = async(id) => {
-    const result = await pool.query('SELECT * FROM jobs WHERE id = $1', [id]);
+const getJobById = async(id, userId) => {
+    const result = await pool.query('SELECT * FROM jobs WHERE id = $1 AND user_id = $2', [id, userId]);
     if (result.rows.length === 0) {
         return null;
     }
     return formatJob(result.rows[0]);
 }
 
-const updateJob = async (id, updateData) => {
+const updateJob = async (id, userId, updateData) => {
    const keys = Object.keys(updateData);
    const values = Object.values(updateData);
    const setClause = keys.map((key, index) => `${fieldMap[key]} = $${index + 1}`).join(', ');
    
-   const query = `UPDATE jobs SET ${setClause} WHERE id = $${keys.length + 1} RETURNING *`;
-   const result = await pool.query(query, [...values, id]);
+   const query = `UPDATE jobs SET ${setClause} WHERE id = $${keys.length + 1} AND user_id = $${keys.length + 2} RETURNING *`;
+   const result = await pool.query(query, [...values, id, userId]);
     if (result.rows.length === 0) { 
         return null;
     }
    return formatJob(result.rows[0]);
 }
 
-const deleteJob = async (id) => {
-    const result = await pool.query('DELETE FROM jobs WHERE id = $1 RETURNING *', [id]);
+const deleteJob = async (id, userId) => {
+    const result = await pool.query('DELETE FROM jobs WHERE id = $1 AND user_id = $2 RETURNING *', [id, userId]);
     if (result.rows.length === 0) {
         return null;
     }
     return formatJob(result.rows[0]);
 }
 
-const getAllJobs = async () => {
-    const result = await pool.query('SELECT * FROM jobs');
+const getAllJobs = async (userId) => {
+    const result = await pool.query('SELECT * FROM jobs WHERE user_id = $1', [userId]);
     return result.rows.map(formatJob);
 };
 

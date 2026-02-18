@@ -4,6 +4,7 @@ const VALID_STATUSES = ['applied', 'interview', 'offer', 'rejected'];
 
 const createJob = async (req, res) => {
     const {company, position, status, appliedDate, notes} = req.body;
+    const userId = req.user.userId;
 
     const errors = [];
     if (!company || typeof company !== 'string') {
@@ -28,21 +29,23 @@ const createJob = async (req, res) => {
         status,
         appliedDate,
         notes: notes ? notes.trim() : '',
-        user_id: req.user.userId
+        user_id: userId
     });
     res.status(201).json({ success: true, data: job });
 };
 
 const getJobs = async (req, res) => {
-    const jobs = await jobStore.getAllJobs();
+  const userId = req.user.userId;
+    const jobs = await jobStore.getAllJobs(userId);
     res.json({ success: true, data: jobs });
 };
 
 const getJobById = async (req, res) => {
+    const userId = req.user.userId;
     if (isNaN(req.params.id)) {
       return res.status(400).json({ success: false, message: 'Invalid job ID' });
     }
-    const job = await jobStore.getJobById(req.params.id);
+    const job = await jobStore.getJobById(req.params.id, userId);
     if (!job) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
@@ -50,10 +53,11 @@ const getJobById = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
+  const userId = req.user.userId;
     if (isNaN(req.params.id)) {
       return res.status(400).json({ success: false, message: 'Invalid job ID' });
     }
-    const job = await jobStore.getJobById(req.params.id);
+    const job = await jobStore.getJobById(req.params.id, userId);
     const allowedUpdates = {};
 
     if (req.body.company !== undefined) {
@@ -83,15 +87,16 @@ const updateJob = async (req, res) => {
     if (!job) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
-    const updatedJob = await jobStore.updateJob(req.params.id, allowedUpdates);
+    const updatedJob = await jobStore.updateJob(req.params.id, userId, allowedUpdates);
     res.json({ success: true, data: updatedJob });
 };
 
 const deleteJob = async (req, res) => {
+  const userId = req.user.userId;
     if (isNaN(req.params.id)) {
       return res.status(400).json({ success: false, message: 'Invalid job ID' });
     }
-    const deletedJob = await jobStore.deleteJob(req.params.id);
+    const deletedJob = await jobStore.deleteJob(req.params.id, userId);
     if (!deletedJob) {
       return res.status(404).json({ success: false, message: 'Job not found' });
     }
