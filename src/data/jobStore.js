@@ -59,9 +59,22 @@ const deleteJob = async (id, userId) => {
     return formatJob(result.rows[0]);
 }
 
-const getAllJobs = async (userId) => {
-    const result = await pool.query('SELECT * FROM jobs WHERE user_id = $1', [userId]);
-    return result.rows.map(formatJob);
+const getAllJobs = async (filter, limit, offset) => {
+    const conditions = ['user_id = $1'];
+    const values = [filter.userId];
+
+        if (filter.status) {
+            conditions.push(`status = $${values.length + 1}`);
+            values.push(filter.status);
+        }
+
+    const query = `SELECT * FROM jobs WHERE ${conditions.join(' AND ')} LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+    const queryTotal = `SELECT COUNT(*) FROM jobs WHERE ${conditions.join(' AND ')}`;
+    const tottalResult  = await pool.query(queryTotal, values);
+    const total = parseInt(tottalResult.rows[0].count, 10);
+
+    const resultQuery = await pool.query(query, [...values, limit, offset]);
+    return { jobs: resultQuery.rows.map(formatJob), total };
 };
 
 module.exports = {
