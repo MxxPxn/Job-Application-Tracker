@@ -117,8 +117,10 @@
     "xtend": "^4.0.2"
   },
   "scripts": {
-    "test": "DATABASE_URL=postgresql://postgres:password@localhost:5432/jobtracker jest",
-    "dev": "nodemon src/index.js"
+    "test": "jest",
+    "dev": "nodemon src/index.js",
+    "migrate": "node-pg-migrate up",
+  "migrate:down": "node-pg-migrate down"
   },
   "keywords": [],
   "author": "",
@@ -127,6 +129,7 @@
   "devDependencies": {
     "eslint": "^9.39.2",
     "jest": "^30.2.0",
+    "node-pg-migrate": "^8.0.4",
     "nodemon": "^3.1.11",
     "supertest": "^7.2.2"
   }
