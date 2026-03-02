@@ -20,3 +20,5 @@ postgres_data/
 .vscode/*
 !.vscode/settings.json
 EOF
+Claude.local.md
+learning-roadmap.txt
