@@ -1,10 +1,12 @@
 require("dotenv").config();
+const cors = require("cors");
 const express = require("express");
 const app = express();
 const { errorHandler } = require("./middleware/errorHandler");
 const auth = require("./routes/auth");
 
 app.use(express.json());
+app.use(cors({origin: 'http://localhost:3001'}));
 
 app.get("/", (req, res) => {
   res.json({

@@ -23,6 +23,7 @@
     "content-type": "^1.0.5",
     "cookie": "^0.7.2",
     "cookie-signature": "^1.0.7",
+    "cors": "^2.8.6",
     "debug": "^2.6.9",
     "depd": "^2.0.0",
     "destroy": "^1.2.0",
@@ -120,7 +121,7 @@
     "test": "jest",
     "dev": "nodemon src/index.js",
     "migrate": "node-pg-migrate up",
-  "migrate:down": "node-pg-migrate down"
+    "migrate:down": "node-pg-migrate down"
   },
   "keywords": [],
   "author": "",
