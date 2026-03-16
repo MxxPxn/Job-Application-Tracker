@@ -5,8 +5,13 @@ const app = express();
 const { errorHandler } = require("./middleware/errorHandler");
 const auth = require("./routes/auth");
 
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || true,
+  credentials: true,
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
-app.use(cors({origin: 'http://localhost:3001'}));
 
 app.get("/", (req, res) => {
   res.json({
