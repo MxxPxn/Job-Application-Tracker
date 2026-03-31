@@ -5,6 +5,7 @@ const fieldMap = {
     company: 'company',
     position: 'position',
     status: 'status',
+    priority: 'priority',
     appliedDate: 'applied_date',
     notes: 'notes'
 };
@@ -15,6 +16,7 @@ const formatJob = (row) => {
         company: row.company,
         position: row.position,
         status: row.status,
+        priority: row.priority,
         appliedDate: row.applied_date,
         notes: row.notes,
         createdAt: row.created_at,
@@ -24,8 +26,8 @@ const formatJob = (row) => {
 
 const addJob = async (jobData) => {
     const result = await pool.query(
-        'INSERT INTO jobs (company, position, status, applied_date, notes, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-        [jobData.company, jobData.position, jobData.status, jobData.appliedDate, jobData.notes, jobData.user_id]
+        'INSERT INTO jobs (company, position, status, applied_date, notes, user_id, priority) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+        [jobData.company, jobData.position, jobData.status, jobData.appliedDate, jobData.notes, jobData.user_id, jobData.priority]
     )
     return formatJob(result.rows[0]);
 };
