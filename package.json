@@ -120,6 +120,7 @@
   },
   "scripts": {
     "test": "jest",
+    "start": "npm run migrate && node src/index.js",
     "dev": "nodemon src/index.js",
     "migrate": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down"
