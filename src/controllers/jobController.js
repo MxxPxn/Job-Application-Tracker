@@ -3,7 +3,7 @@ const jobStore = require("../data/jobStore");
 const VALID_STATUSES = ["applied", "interview", "offer", "rejected"];
 
 const createJob = async (req, res) => {
-  const { company, position, status, appliedDate, notes } = req.body;
+  const { company, position, location, salary, deadlineDate, jobUrl, status, appliedDate, notes, priority } = req.body;
   const userId = req.user.userId;
 
   const errors = [];
@@ -27,7 +27,12 @@ const createJob = async (req, res) => {
     company: company.trim(),
     position: position.trim(),
     status,
+    location: location ? location.trim() : "",
+    salary: salary ? salary.trim() : "",
+    deadlineDate: deadlineDate ? deadlineDate.trim() : "",
+    jobUrl: jobUrl ? jobUrl.trim() : "",
     appliedDate,
+    priority: priority ? priority.trim() : 'medium',
     notes: notes ? notes.trim() : "",
     user_id: userId,
   });
@@ -117,6 +122,29 @@ const updateJob = async (req, res) => {
   }
   if (req.body.notes !== undefined) {
     allowedUpdates.notes = req.body.notes;
+  }
+
+  if (req.body.location !== undefined) {
+    allowedUpdates.location = req.body.location;
+  }
+  if (req.body.salary !== undefined) {
+    allowedUpdates.salary = req.body.salary;
+  }
+  if (req.body.deadlineDate !== undefined) {
+    if (!isNaN(Date.parse(req.body.deadlineDate))) {
+      allowedUpdates.deadlineDate = req.body.deadlineDate;
+    } else {
+      return res
+        .status(400)
+        .json({ success: false, message: "deadlineDate must be a valid date" });
+    }
+    allowedUpdates.deadlineDate = req.body.deadlineDate;
+  }
+  if (req.body.jobUrl !== undefined) {
+    allowedUpdates.jobUrl = req.body.jobUrl;
+  }
+  if (req.body.priority !== undefined) {
+    allowedUpdates.priority = req.body.priority;
   }
 
   if (!job) {
