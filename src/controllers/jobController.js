@@ -29,7 +29,7 @@ const createJob = async (req, res) => {
     status,
     location: location ? location.trim() : "",
     salary: salary ? salary.trim() : "",
-    deadlineDate: deadlineDate ? deadlineDate.trim() : "",
+    deadlineDate: deadlineDate ? deadlineDate.trim() : null,
     jobUrl: jobUrl ? jobUrl.trim() : "",
     appliedDate,
     priority: priority ? priority.trim() : 'medium',
@@ -55,6 +55,17 @@ const getJobs = async (req, res) => {
     }
     filters.status = status;
   }
+  const VALID_PRIORITIES = ["low", "medium", "high"];
+  if (req.query.priority) {
+    if (!VALID_PRIORITIES.includes(req.query.priority)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid priority filter. Must be one of: ${VALID_PRIORITIES.join(", ")}`,
+      });
+    }
+    filters.priority = req.query.priority;
+  }
+
   if (isNaN(pageNum) || pageNum < 1) {
     return res
       .status(400)
