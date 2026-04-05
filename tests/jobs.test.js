@@ -11,7 +11,7 @@ describe('Job API Endpoints', () => {
             email: `testuser${Date.now()}@example.com`,
             password: 'TestPass123!'
         });
-        token = res.body.token;
+        token = res.body.accessToken;
     });
 
     it ('POST /api/jobs - should create a new job', async () => {
