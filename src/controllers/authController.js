@@ -56,8 +56,8 @@ const hashToken = (raw) =>
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  sameSite: 'strict',
-  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'none',
+  secure: true,
   maxAge: REFRESH_TOKEN_EXPIRY_MS,
 };
 
