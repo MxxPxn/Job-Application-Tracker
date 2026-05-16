@@ -9,7 +9,8 @@ describe('formatJob', () => {
             status: 'applied',
             applied_date: '2024-06-15',
             notes: 'Follow up in two weeks',
-            created_at: '2024-06-10T12:00:00Z'
+            created_at: '2024-06-10T12:00:00Z',
+            platform: 'LinkedIn'
         };
 
         const expectedJob = {
@@ -19,7 +20,8 @@ describe('formatJob', () => {
             status: 'applied',
             appliedDate: '2024-06-15',
             notes: 'Follow up in two weeks',
-            createdAt: '2024-06-10T12:00:00Z'
+            createdAt: '2024-06-10T12:00:00Z',
+            platform: 'LinkedIn'
         };
 
         const formattedJob = formatJob(dbRow);

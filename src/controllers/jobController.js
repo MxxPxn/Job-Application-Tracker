@@ -3,7 +3,7 @@ const jobStore = require("../data/jobStore");
 const VALID_STATUSES = ["applied", "interview", "offer", "rejected"];
 
 const createJob = async (req, res) => {
-  const { company, position, location, salary, deadlineDate, jobUrl, source, status, appliedDate, notes, priority } = req.body;
+  const { company, position, location, salary, deadlineDate, jobUrl, platform, status, appliedDate, notes, priority } = req.body;
   const userId = req.user.userId;
 
   const errors = [];
@@ -16,8 +16,8 @@ const createJob = async (req, res) => {
   if (!status || !VALID_STATUSES.includes(status)) {
     errors.push(`status must be one of: ${VALID_STATUSES.join(", ")}`);
   }
-  if (source !== undefined && source !== null &&(typeof source !== "string" || source.length > 100 || source.trim().length === 0 )) {
-    errors.push("source must be a string with a maximum length of 100 characters or null");
+  if (platform !== undefined && platform !== null &&(typeof platform !== "string" || platform.length > 100 || platform.trim().length === 0 )) {
+    errors.push("platform must be a string with a maximum length of 100 characters or null");
   }
   if (!appliedDate || isNaN(Date.parse(appliedDate))) {
     errors.push("appliedDate is required and must be a valid date");
@@ -34,7 +34,7 @@ const createJob = async (req, res) => {
     salary: salary ? salary.trim() : "",
     deadlineDate: deadlineDate ? deadlineDate.trim() : null,
     jobUrl: jobUrl ? jobUrl.trim() : "",
-    source: source ? source.trim() : null,
+    platform: platform ? platform.trim() : null,
     appliedDate,
     priority: priority ? priority.trim() : 'medium',
     notes: notes ? notes.trim() : "",
@@ -158,13 +158,14 @@ const updateJob = async (req, res) => {
   if (req.body.jobUrl !== undefined) {
     allowedUpdates.jobUrl = req.body.jobUrl;
   }
-  if (req.body.source !== undefined) {
-    if(req.body.source === null || (typeof req.body.source === "string" && req.body.source.length <= 100 && req.body.source.trim().length > 0)) {
-      allowedUpdates.source = req.body.source;
+  if (req.body.platform !== undefined) {
+    if(req.body.platform === null || (typeof req.body.platform === "string" && req.body.platform.length <= 100 && req.body.platform.trim().length > 0)) {
+      allowedUpdates.platform = req.body.platform === null ? null : req.body.platform.trim();
+
     } else {
       return res
         .status(400)
-        .json({ success: false, message: "source must be a string with a maximum length of 100 characters or null" });
+        .json({ success: false, message: "platform must be a string with a maximum length of 100 characters or null" });
     }
   }
   if (req.body.priority !== undefined) {

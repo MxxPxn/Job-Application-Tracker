@@ -23,18 +23,18 @@ describe('Job API Endpoints', () => {
                 position: 'developer',
                 status: 'applied',
                 appliedDate: '2024-03-20',
-                source: 'LinkedIn',
+                platform: 'LinkedIn',
                 notes: 'Excited about this opportunity'
             });
 
         expect(res.statusCode).toEqual(201);
         expect(res.body).toHaveProperty('success', true);
         expect(res.body.data).toHaveProperty('id');
-        expect(res.body.data).toHaveProperty('source', 'LinkedIn');
+        expect(res.body.data).toHaveProperty('platform', 'LinkedIn');
         expect(res.body.data).toHaveProperty('company', 'Google');
     });
     
-    it('POST /api/jobs - should return 400 if source exceeds 100 characters', async () => {
+    it('POST /api/jobs - should return 400 if platform exceeds 100 characters', async () => {
         const res = await request(app)
             .post('/api/jobs')
             .set('Authorization', `Bearer ${token}`)
@@ -43,8 +43,8 @@ describe('Job API Endpoints', () => {
                 position: 'Test Position',
                 status: 'applied',
                 appliedDate: '2024-03-20',
-                source: 'X'.repeat(101), // 101 characters
-                notes: 'This job has an invalid source'
+                platform: 'X'.repeat(101), // 101 characters
+                notes: 'This job has an invalid platform'
             });
         expect(res.statusCode).toEqual(400);
         expect(res.body).toHaveProperty('success', false);

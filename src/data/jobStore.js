@@ -8,7 +8,7 @@ const fieldMap = {
     location: 'location',
     salary: 'salary',
     deadlineDate: 'deadline_date',
-    source: 'source',
+    platform: 'platform',
     jobUrl: 'job_url',
     priority: 'priority',
     appliedDate: 'applied_date',
@@ -23,7 +23,7 @@ const formatJob = (row) => {
         status: row.status,
         priority: row.priority,
         location: row.location,
-        source: row.source,
+        platform: row.platform,
         salary: row.salary,
         deadlineDate: row.deadline_date,
         jobUrl: row.job_url,
@@ -36,8 +36,8 @@ const formatJob = (row) => {
 
 const addJob = async (jobData) => {
     const result = await pool.query(
-        'INSERT INTO jobs (company, position, location, salary, deadline_date, job_url, source, status, applied_date, notes, user_id, priority) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
-        [jobData.company, jobData.position, jobData.location, jobData.salary, jobData.deadlineDate, jobData.jobUrl, jobData.source, jobData.status, jobData.appliedDate, jobData.notes, jobData.user_id, jobData.priority]
+        'INSERT INTO jobs (company, position, location, salary, deadline_date, job_url, platform, status, applied_date, notes, user_id, priority) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *',
+        [jobData.company, jobData.position, jobData.location, jobData.salary, jobData.deadlineDate, jobData.jobUrl, jobData.platform, jobData.status, jobData.appliedDate, jobData.notes, jobData.user_id, jobData.priority]
     )
     return formatJob(result.rows[0]);
 };
