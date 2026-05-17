@@ -70,6 +70,17 @@ const getJobs = async (req, res) => {
     filters.priority = req.query.priority;
   }
 
+  if (req.query.platform) { 
+   if (req.query.platform.length <= 100) {
+      filters.platform = req.query.platform;
+   } else {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid platform filter. Must be a string with a maximum length of 100 characters",
+    });
+   }
+  }
+
   if (isNaN(pageNum) || pageNum < 1) {
     return res
       .status(400)
