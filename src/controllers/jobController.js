@@ -45,7 +45,7 @@ const createJob = async (req, res) => {
 
 const getJobs = async (req, res) => {
   const userId = req.user.userId;
-  const { status, page = "1", limit = "10" } = req.query;
+  const { status, page = "1", limit = "10", search } = req.query;
   const filters = { userId };
   const pageNum = parseInt(page);
   const limitNum = Math.min(parseInt(limit), 100); // Cap limit at 100
@@ -70,7 +70,11 @@ const getJobs = async (req, res) => {
     filters.priority = req.query.priority;
   }
 
-  if (req.query.platform) { 
+  if (search && search.trim()) {
+    filters.search = search.trim();
+  }
+
+  if (req.query.platform) {
    if (req.query.platform.length <= 100) {
       filters.platform = req.query.platform;
    } else {

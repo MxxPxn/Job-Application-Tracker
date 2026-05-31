@@ -88,6 +88,11 @@ const getAllJobs = async (filter, limit, offset) => {
             conditions.push(`platform = $${values.length + 1}`);
             values.push(filter.platform);
         }
+        if (filter.search) {
+            const idx = values.length + 1;
+            conditions.push(`(company ILIKE $${idx} OR position ILIKE $${idx})`);
+            values.push(`%${filter.search}%`);
+        }
 
     const query = `SELECT * FROM jobs WHERE ${conditions.join(' AND ')} LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
     const queryTotal = `SELECT COUNT(*) FROM jobs WHERE ${conditions.join(' AND ')}`;
