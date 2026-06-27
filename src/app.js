@@ -30,8 +30,10 @@ app.get("/health", (req, res) => {
 });
 
 const jobsRouter = require("./routes/jobs");
+const reportRoutes = require("./routes/reportRoutes");
 app.use("/api/jobs", jobsRouter);
 app.use("/api/auth", auth);
+app.use("/api/reports", reportRoutes);
 
 app.use(errorHandler);
 module.exports = app;
