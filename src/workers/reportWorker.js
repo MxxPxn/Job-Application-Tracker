@@ -21,12 +21,22 @@ const worker = new Worker('report-generation', async (job) => {
   const doc = new PDFDocument();
   doc.pipe(fs.createWriteStream(filePath));
 
+  const formatDate = (d) =>
+    new Date(d).toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const generatedAt = new Date().toLocaleString('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+
   doc.fontSize(18).text('Job Application Report', { align: 'center' });
-  doc.moveDown();
+  doc.fontSize(10).fillColor('gray').text(`Generated: ${generatedAt}`, { align: 'center' });
+  doc.fillColor('black').moveDown();
 
   applications.forEach((app) => {
     doc.fontSize(12).text(`${app.company} — ${app.position}`);
-    doc.fontSize(10).text(`Status: ${app.status} | Applied: ${app.applied_date}`);
+    doc.fontSize(10).text(`Status: ${app.status} | Applied: ${formatDate(app.applied_date)}`);
     doc.moveDown();
   });
 
