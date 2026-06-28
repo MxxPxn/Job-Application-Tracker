@@ -12,6 +12,9 @@ npm-debug.log*
 # Docker
 postgres_data/
 
+# Generated reports
+reports/
+
 # OS files
 .DS_Store
 
