@@ -13,7 +13,7 @@ const worker = new Worker('report-generation', async (job) => {
   const { userId } = job.data;
 
   const { rows: applications } = await db.query(
-    'SELECT company, position, status, applied_date FROM jobs WHERE user_id = $1 ORDER BY applied_date DESC',
+    'SELECT company, position, status, applied_date, salary, location, notes FROM jobs WHERE user_id = $1 ORDER BY applied_date DESC',
     [userId]
   );
 
@@ -30,13 +30,39 @@ const worker = new Worker('report-generation', async (job) => {
     hour: '2-digit', minute: '2-digit',
   });
 
-  doc.fontSize(18).text('Job Application Report', { align: 'center' });
-  doc.fontSize(10).fillColor('gray').text(`Generated: ${generatedAt}`, { align: 'center' });
+  // Header
+  doc.fontSize(20).font('Helvetica-Bold').text('Job Application Report', { align: 'center' });
+  doc.fontSize(10).font('Helvetica').fillColor('gray').text(`Generated: ${generatedAt}`, { align: 'center' });
   doc.fillColor('black').moveDown();
 
+  // Summary stats
+  const total = applications.length;
+  const byStatus = applications.reduce((acc, a) => {
+    acc[a.status] = (acc[a.status] || 0) + 1;
+    return acc;
+  }, {});
+
+  doc.fontSize(13).font('Helvetica-Bold').text('Summary');
+  doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).stroke();
+  doc.moveDown(0.4);
+  doc.fontSize(10).font('Helvetica').text(`Total applications: ${total}`);
+  Object.entries(byStatus).forEach(([status, count]) => {
+    doc.text(`  ${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`);
+  });
+  doc.moveDown();
+
+  // Applications list
+  doc.fontSize(13).font('Helvetica-Bold').text('Applications');
+  doc.moveTo(doc.page.margins.left, doc.y).lineTo(doc.page.width - doc.page.margins.right, doc.y).stroke();
+  doc.moveDown(0.4);
+
   applications.forEach((app) => {
-    doc.fontSize(12).text(`${app.company} — ${app.position}`);
-    doc.fontSize(10).text(`Status: ${app.status} | Applied: ${formatDate(app.applied_date)}`);
+    doc.fontSize(12).font('Helvetica-Bold').text(`${app.company} — ${app.position}`);
+    doc.fontSize(10).font('Helvetica')
+      .text(`Status: ${app.status}  |  Applied: ${formatDate(app.applied_date)}${app.location ? `  |  Location: ${app.location}` : ''}${app.salary ? `  |  Salary: ${app.salary}` : ''}`);
+    if (app.notes) {
+      doc.fontSize(9).fillColor('gray').text(`Notes: ${app.notes}`).fillColor('black');
+    }
     doc.moveDown();
   });
 
