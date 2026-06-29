@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const jobsController = require('../controllers/jobController');
 router.use(verifyToken);
+router.get('/stats', asyncHandler(jobsController.getStats));
 router.post('/', asyncHandler(jobsController.createJob));
 router.get('/', asyncHandler(jobsController.getJobs));
 router.get('/:id', asyncHandler(jobsController.getJobById));

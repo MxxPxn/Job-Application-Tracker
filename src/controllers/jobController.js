@@ -1,6 +1,6 @@
 const jobStore = require("../data/jobStore");
 
-const VALID_STATUSES = ["applied", "interview", "offer", "rejected"];
+const VALID_STATUSES = ["applied", "interview", "offer", "rejected", "cv_viewed"];
 
 const createJob = async (req, res) => {
   const { company, position, location, salary, deadlineDate, jobUrl, platform, status, appliedDate, notes, priority } = req.body;
@@ -210,10 +210,17 @@ const deleteJob = async (req, res) => {
   res.json({ success: true, data: deletedJob });
 };
 
+const getStats = async (req, res) => {
+  const userId = req.user.userId;
+  const stats = await jobStore.getStatsByStatus(userId);
+  res.json({ success: true, data: stats });
+};
+
 module.exports = {
   createJob,
   getJobs,
   getJobById,
   updateJob,
   deleteJob,
+  getStats,
 };

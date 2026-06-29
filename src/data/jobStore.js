@@ -103,11 +103,22 @@ const getAllJobs = async (filter, limit, offset) => {
     return { jobs: resultQuery.rows.map(formatJob), total };
 };
 
+const getStatsByStatus = async (userId) => {
+    const result = await pool.query(
+        `SELECT status, COUNT(*) as count FROM jobs WHERE user_id = $1 GROUP BY status`,
+        [userId]
+    );
+    const map = { applied: 0, interview: 0, offer: 0, rejected: 0, cv_viewed: 0 };
+    result.rows.forEach(row => { map[row.status] = parseInt(row.count, 10); });
+    return map;
+};
+
 module.exports = {
     addJob,
     getAllJobs,
     getJobById,
     updateJob,
-    deleteJob, 
-    formatJob
-    };
+    deleteJob,
+    formatJob,
+    getStatsByStatus,
+};
