@@ -19,7 +19,8 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ success: false, message: 'Invalid token' });
+      // 401 (not 403) so the client's interceptor refreshes expired tokens
+      return res.status(401).json({ success: false, message: 'Invalid token' });
     }
     req.user = user;
     next();

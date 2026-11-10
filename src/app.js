@@ -6,8 +6,15 @@ const app = express();
 const { errorHandler } = require("./middleware/errorHandler");
 const auth = require("./routes/auth");
 
+// Comma-separated list of origins allowed to make credentialed requests.
+// Unset means no cross-origin access at all, never "allow everyone".
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || true,
+  origin: allowedOrigins,
   credentials: true,
 };
 app.use(cors(corsOptions));

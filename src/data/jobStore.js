@@ -94,7 +94,7 @@ const getAllJobs = async (filter, limit, offset) => {
             values.push(`%${filter.search}%`);
         }
 
-    const query = `SELECT * FROM jobs WHERE ${conditions.join(' AND ')} LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
+    const query = `SELECT * FROM jobs WHERE ${conditions.join(' AND ')} ORDER BY created_at DESC LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
     const queryTotal = `SELECT COUNT(*) FROM jobs WHERE ${conditions.join(' AND ')}`;
     const tottalResult  = await pool.query(queryTotal, values);
     const total = parseInt(tottalResult.rows[0].count, 10);
@@ -112,6 +112,39 @@ const getStatsByStatus = async (userId) => {
     result.rows.forEach(row => { map[row.status] = parseInt(row.count, 10); });
     return map;
 };
+{/*application counts per week and month*/}
+const getApplicationCounts = async(userId) => {
+    const result = await pool.query(
+        `SELECT
+            COUNT(*) FILTER (WHERE applied_date >= date_trunc('week', CURRENT_DATE)) AS this_week,
+            COUNT(*) FILTER (WHERE applied_date >= date_trunc('week', CURRENT_DATE) - interval '7 days'
+                              AND applied_date < date_trunc('week', CURRENT_DATE)) AS last_week,
+            COUNT(*) FILTER (WHERE applied_date >= date_trunc('month', CURRENT_DATE)) AS this_month,
+            COUNT(*) FILTER (WHERE applied_date >= date_trunc('month', CURRENT_DATE) - interval '1 month'
+                              AND applied_date < date_trunc('month', CURRENT_DATE)) AS last_month
+        FROM jobs
+        WHERE user_id = $1 AND applied_date IS NOT NULL
+        `,
+        [userId]
+    );
+    const row = result.rows[0];
+    const thisWeek = parseInt(row.this_week, 10);
+    const lastWeek = parseInt(row.last_week, 10);
+    const thisMonth = parseInt(row.this_month, 10);
+    const lastMonth = parseInt(row.last_month, 10);
+
+    const pctChange = (current, previous) => {
+        if (previous === 0) return current === 0 ? 0 : null;
+        return Math.round(((current - previous) / previous) * 100);
+    };
+
+    return {
+        thisWeek,
+        thisMonth,
+        weekChangePct: pctChange(thisWeek, lastWeek),
+        monthChangePct: pctChange(thisMonth, lastMonth)
+    };
+};
 
 module.exports = {
     addJob,
@@ -121,4 +154,5 @@ module.exports = {
     deleteJob,
     formatJob,
     getStatsByStatus,
+    getApplicationCounts
 };

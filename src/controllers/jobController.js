@@ -212,8 +212,11 @@ const deleteJob = async (req, res) => {
 
 const getStats = async (req, res) => {
   const userId = req.user.userId;
-  const stats = await jobStore.getStatsByStatus(userId);
-  res.json({ success: true, data: stats });
+  const [stats, applicationCounts] = await Promise.all([
+    jobStore.getStatsByStatus(userId),
+    jobStore.getApplicationCounts(userId)
+  ]);
+  res.json({ success: true, data: { ...stats, ...applicationCounts } });
 };
 
 module.exports = {

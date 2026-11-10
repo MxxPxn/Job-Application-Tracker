@@ -2,6 +2,14 @@ const { reportQueue } = require('../queues/reportQueue');
 const path = require('path');
 const fs = require('fs');
 
+// Returns the queue job only if it belongs to the requesting user, so report
+// IDs (sequential integers) can't be enumerated to read other users' reports.
+async function getOwnedJob(req) {
+  const job = await reportQueue.getJob(req.params.jobId);
+  if (!job || job.data.userId !== req.user.userId) return null;
+  return job;
+}
+
 // POST /api/reports
 async function createReport(req, res) {
   try {
@@ -17,7 +25,7 @@ async function createReport(req, res) {
 async function getReportStatus(req, res) {
   try {
     const { jobId } = req.params;
-    const job = await reportQueue.getJob(jobId);
+    const job = await getOwnedJob(req);
 
     if (!job) {
       return res.status(404).json({ error: 'Job not found' });
@@ -43,8 +51,7 @@ async function getReportStatus(req, res) {
 // GET /api/reports/:jobId/download
 async function downloadReport(req, res) {
   try {
-    const { jobId } = req.params;
-    const job = await reportQueue.getJob(jobId);
+    const job = await getOwnedJob(req);
 
     if (!job || (await job.getState()) !== 'completed') {
       return res.status(404).json({ error: 'Report not ready' });
